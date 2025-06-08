@@ -443,14 +443,14 @@ Write a C function that returns the cycle counter by reading CSR 0xC00 using inl
         return 0;
     }
     ```
-    ![Inline assembly code (hello.c)](Outputs/task9_1.jpg)
+    ![Inline assembly code (hello.c)](Outputs/task9_1.jpeg)
 
 2. **Compiled and executed the program:**
     ```
     riscv32-unknown-elf-gcc -march=rv32gc -mabi=ilp32 -o hello.elf hello.c
     qemu-riscv32 hello.elf
     ```
-    ![Compilation and execution](Outputs/task9_2.jpg)
+    ![Compilation and execution](Outputs/task9_2.jpeg)
 
 ---
 
