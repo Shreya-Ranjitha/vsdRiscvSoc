@@ -551,7 +551,7 @@ Demonstrate bare-metal C code to toggle a GPIO register located at 0x10012000, a
         return 0;
     }
     ```
-    ![GPIO toggle C code](Outputs/task10_1.jpeg)
+    ![GPIO toggle C code](Outputs/task10_1_1.jpeg)
 
 2. **Compiled and ran the program in QEMU:**
     ```
@@ -572,4 +572,123 @@ Demonstrate bare-metal C code to toggle a GPIO register located at 0x10012000, a
   The `while (1);` loop in `main` prevents the program from exiting, which is standard practice in bare-metal embedded code.
 
 ---
+### Task 11: Linker Script 101
 
+**Objective:**  
+Understand and modify a linker script to control the placement of `.text` and `.data` sections in memory, and observe the effect on ELF section addresses.
+
+---
+
+#### **Process**
+
+1. **Created a custom linker script (`link.ld`):**
+    ```
+    SECTIONS {
+      .text 0x00000000 : { *(.text*) }
+      .data 0x10000000 : { *(.data*) }
+    }
+    ```
+    ![Custom linker script (link.ld)](Outputs/task11_1.jpeg)
+
+2. **Wrote a test C program (`hello.c`) with initialized data:**
+    ```
+    int mydata = 42;
+
+    int main() {
+        while (1);
+        return 0;
+    }
+    ```
+    ![Test C program with data section (hello.c)](Outputs/task11_2.jpeg)
+
+3. **Modified to use an array in the data section:**
+    ```
+    int mydata = {1, 2, 3};
+
+    int main() {
+        while (1);
+        return 0;
+    }
+    ```
+    ![C program with larger data section (hello.c)](Outputs/task11_3.jpeg)
+
+4. **Compiled and examined ELF section headers:**
+    ```
+    riscv32-unknown-elf-gcc -march=rv32imc -mabi=ilp32 -nostdlib -nostartfiles -T link.ld -o hello.elf hello.c
+    riscv32-unknown-elf-objdump -h hello.elf
+    ```
+    ![ELF section headers after custom linking](Outputs/task11_4.jpeg)
+
+---
+
+#### **Explanation**
+
+- The linker script explicitly places the `.text` (code) section at address `0x00000000` and the `.data` (initialized data) section at address `0x10000000`.
+- By changing the size of the `mydata` array in `hello.c`, the size of the `.data` section in the ELF file increases, which is reflected in the section headers.
+- The `objdump -h` output shows the virtual memory addresses (VMA) and sizes of each section, confirming the effect of the linker script on the final memory layout.
+
+---
+
+### Task 12: Start-up Code & crt0
+
+**Objective:**  
+Understand and implement a minimal RISC-V startup routine (`crt0.s`) and linker script (`link.ld`) to correctly initialize the stack and .bss section before calling `main`.
+
+---
+
+#### **Process**
+
+1. **Wrote the startup assembly file (`crt0.s`):**
+    ```
+    .section .init
+    .globl _start
+    _start:
+        la sp, _stack_top            # Set up stack pointer (symbol from linker script)
+
+        # (Optional) Clear .bss section
+        la a0, _sbss
+        la a1, _ebss
+        li a2, 0
+    bss_loop:
+        bge a0, a1, call_main
+        sw a2, 0(a0)
+        addi a0, a0, 4
+        j bss_loop
+
+    call_main:
+        call main
+
+    hang:
+        j hang
+    ```
+    ![crt0.s content](Outputs/task12_1.jpeg)
+
+2. **Created the linker script (`link.ld`):**
+    ```
+    SECTIONS {
+      .text 0x00000000 : { *(.text*) }
+      .data 0x10000000 : { *(.data*) *(.sdata*) }
+      .bss : { *(.bss*) *(.sbss*) }
+      _sbss = ADDR(.bss);
+      _ebss = ADDR(.bss) + SIZEOF(.bss);
+      _stack_top = 0x10020000; /* Example stack top address */
+    }
+    ```
+    ![link.ld content](Outputs/task12_2.jpeg)
+
+3. **Compiled and disassembled the ELF:**
+    ```
+    riscv32-unknown-elf-gcc -march=rv32imc -mabi=ilp32 -nostdlib -nostartfiles -T link.ld crt0.s hello.c -o hello.elf
+    riscv32-unknown-elf-objdump -d hello.elf
+    ```
+    ![Disassembly of hello.elf](Outputs/task12_3.jpeg)
+
+---
+
+#### **Explanation**
+
+- The `crt0.s` file sets up the stack pointer, clears the `.bss` section (zero-initialized data), and then calls `main`. If `main` returns, the code enters an infinite loop (`hang`).
+- The linker script (`link.ld`) defines where each section (`.text`, `.data`, `.bss`) is placed in memory and provides symbols for the stack and `.bss` boundaries.
+- The disassembly output confirms that the startup code and `main` are correctly linked and located at the specified addresses.
+
+---
