@@ -10,8 +10,6 @@ This README will serve as a complete log of commands, code, outputs, screenshots
 
 ## Table of Contents
 
-## Table of Contents
-
 - [Introduction](#introduction)
 - [Week 1](#week-1)
   - [Task 1: Install & Sanity-Check the Toolchain](#task-1-install--sanity-check-the-toolchain)
