@@ -20,3 +20,11 @@ This README will serve as a complete log of commands, code, outputs, screenshots
   - [Task 6: Stepping with GDB](#task-6-stepping-with-gdb)
   - [Task 7: Running Under an Emulator](#task-7-running-under-an-emulator)
 
+## Week 1
+
+### Task 1: Toolchain Setup
+
+**Objective:**  
+Set up the RISC-V toolchain and verify installation.
+
+**Commands Used:**
