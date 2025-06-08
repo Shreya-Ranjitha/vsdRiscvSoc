@@ -75,4 +75,50 @@ Set up the RISC-V cross-compilation toolchain on Ubuntu, add it to your PATH, an
 ![Toolchain extraction and PATH setup](Outputs/task1_1.jpeg)
 ![Toolchain version check](Outputs/task1_2.jpeg)
 
+## Week 2
+
+### Task 1: Compile "Hello, RISC-V" and Generate Assembly
+
+**Objective:**  
+Write a minimal C program that prints "Hello, RISC-V!", cross-compile it for RV32IMC, and generate the corresponding assembly code.
+
+---
+
+#### **Process**
+
+1. **Created the C source file (`hello.c`):**
+    ```
+    #include <stdio.h>
+    int main() {
+        printf("Hello, RISC-V!\n");
+        return 0;
+    }
+    ```
+    ![hello.c source code](Outputs/task2_1.jpeg)
+
+2. **Generated assembly from C source:**
+    ```
+    riscv32-unknown-elf-gcc -S hello.c
+    cat hello.s
+    ```
+    ![Assembly output (hello.s)](Outputs/task2_2.jpeg)
+
+---
+
+#### **Explanation**
+
+- The `-S` flag tells the compiler to generate assembly (`hello.s`) instead of an object or executable.
+- The assembly file shows the function prologue, the loading of the string, and the call to `puts` (which is used by `printf` for simple strings).
+- Key instructions in the prologue:
+  - `addi sp,sp,-16` : Allocates stack space.
+  - `sw ra,12(sp)` : Saves the return address.
+  - `sw s0,8(sp)` : Saves the frame pointer.
+  - `lui`/`addi` : Loads the string address.
+  - `call puts` : Calls the function to print the string.
+- The epilogue restores the stack and returns.
+
+---
+
+
+
 
