@@ -117,5 +117,61 @@ Write a minimal C program that prints "Hello, RISC-V!" and cross-compile it for 
 - The `file` command verifies the output is a valid RISC-V ELF executable.
 
 ---
+### Task 3: From C to Assembly
+
+**Objective:**  
+Generate the assembly code for the minimal "Hello, RISC-V!" C program and explain the function prologue and epilogue.
+
+---
+
+#### **Process**
+
+1. **Compiled the C file to assembly:**
+    ```
+    riscv32-unknown-elf-gcc -S hello.c
+    cat hello.s
+    ```
+    ![Assembly output (hello.s)](Outputs/task3_1.jpeg)
+
+---
+
+#### **Explanation**
+
+- The `-S` flag tells the compiler to produce assembly code (`hello.s`) from the C source.
+- The generated assembly includes:
+  - **String Section:**  
+    `.string "Hello, RISC-V!"` stores the string constant.
+  - **Function Prologue:**  
+    ```
+    addi    sp,sp,-16
+    sw      ra,12(sp)
+    sw      s0,8(sp)
+    addi    s0,sp,16
+    ```
+    These instructions allocate stack space and save the return address (`ra`) and frame pointer (`s0`).
+  - **Function Body:**  
+    Loads the address of the string into a register and calls `puts` to print the message.
+  - **Function Epilogue:**  
+    ```
+    lw      ra,12(sp)
+    lw      s0,8(sp)
+    addi    sp,sp,16
+    jr      ra
+    ```
+    Restores the stack and returns from the function.
+
+---
+
+#### **Issues Faced**
+
+- No issues encountered.  
+  *(If you faced any, describe them here.)*
+
+---
+
+**References:**  
+- [Assignment PDF, Task 3][2]
+
+---
 
 
