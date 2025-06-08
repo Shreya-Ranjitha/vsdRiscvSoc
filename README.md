@@ -364,6 +364,59 @@ Run a bare-metal RISC-V ELF on QEMU and print to the UART console.
       `Hello, UART!`
     ![QEMU UART output](Outputs/task7_4.jpg)
 
+---
+
+### Task 8: Exploring GCC Optimisation
+
+**Objective:**  
+Compile the same C program with different optimization levels (-O0 vs -O2) and analyze the differences in the generated assembly code.
+
+---
+
+#### **Process**
+
+1. **Compiled with no optimization (-O0):**
+    ```
+    riscv32-unknown-elf-gcc -march=rv32imc -mabi=ilp32 -O0 -S hello.c -o hello_O0.s
+    ```
+
+2. **Compiled with level 2 optimization (-O2):**
+    ```
+    riscv32-unknown-elf-gcc -march=rv32imc -mabi=ilp32 -O2 -S hello.c -o hello_O2.s
+    ```
+
+3. **Compared the assembly outputs:**
+    ```
+    diff -u hello_O0.s hello_O2.s
+    ```
+    ![Optimization comparison (-O0 vs -O2)](Outputs/task8_1.jpg)
+
+---
+
+#### **Explanation**
+
+The comparison reveals several key optimization differences:
+
+- **Code Size Reduction:**  
+  The `-O2` optimized version shows significant changes in the assembly structure, with many instructions being eliminated or reorganized.
+
+- **Function Call Optimization:**  
+  The optimized version may inline simple function calls or replace `printf` calls with more efficient alternatives like `puts` when appropriate.
+
+- **Register Allocation:**  
+  Better register usage is evident in the `-O2` version, reducing unnecessary memory operations and improving execution efficiency.
+
+- **Instruction Scheduling:**  
+  The compiler reorders instructions to minimize pipeline stalls and improve instruction-level parallelism.
+
+- **Dead Code Elimination:**  
+  Unused variables and redundant operations are removed in the optimized version.
+
+- **Stack Frame Optimization:**  
+  The optimized version may use fewer stack operations and more efficient prologue/epilogue sequences.
+
+---
+
 
 
 
