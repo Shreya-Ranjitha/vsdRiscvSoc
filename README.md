@@ -118,15 +118,4 @@ Write a minimal C program that prints "Hello, RISC-V!" and cross-compile it for 
 
 ---
 
-#### **Issues Faced**
 
-- No issues encountered.  
-  *(If you had any, note them here for completeness.)*
-
----
-
-**References:**  
-- [Assignment PDF, Task 2](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/63085063/dfbcd8f7-a8be-454d-abb9-415dd1feba97/p1w1.pdf)
-- [Peer Example](https://github.com/rsdsrahul4566/vsdRiscvSoc/blob/main/README.md)
-
----
