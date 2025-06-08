@@ -223,3 +223,71 @@ Disassemble the RISC-V ELF file and convert it to a raw Intel HEX format, unders
 
 ---
 
+
+### Task 5: ABI & Register Cheat-Sheet
+
+**Objective:**  
+List all 32 RV32 integer registers with their ABI names and typical calling-convention roles.
+
+---
+
+#### **RISC-V Integer Register Table**
+
+| Register | ABI Name | Description                      | Preserved Across Calls? | Typical Role                         |
+|----------|----------|----------------------------------|------------------------|--------------------------------------|
+| x0       | zero     | Hard-wired zero                  | n/a                    | Constant zero                        |
+| x1       | ra       | Return address                   | No                     | Stores return address for function calls |
+| x2       | sp       | Stack pointer                    | Yes                    | Points to top of stack               |
+| x3       | gp       | Global pointer                   | n/a                    | Points to global data                |
+| x4       | tp       | Thread pointer                   | n/a                    | Points to thread data                |
+| x5       | t0       | Temporary register 0             | No                     | Caller-saved temporary               |
+| x6       | t1       | Temporary register 1             | No                     | Caller-saved temporary               |
+| x7       | t2       | Temporary register 2             | No                     | Caller-saved temporary               |
+| x8       | s0/fp    | Saved register 0 / frame pointer | Yes                    | Callee-saved, frame pointer          |
+| x9       | s1       | Saved register 1                 | Yes                    | Callee-saved                         |
+| x10      | a0       | Function argument 0 / return val | No                     | Argument / return value              |
+| x11      | a1       | Function argument 1 / return val | No                     | Argument / return value              |
+| x12      | a2       | Function argument 2              | No                     | Argument                             |
+| x13      | a3       | Function argument 3              | No                     | Argument                             |
+| x14      | a4       | Function argument 4              | No                     | Argument                             |
+| x15      | a5       | Function argument 5              | No                     | Argument                             |
+| x16      | a6       | Function argument 6              | No                     | Argument                             |
+| x17      | a7       | Function argument 7              | No                     | Argument                             |
+| x18      | s2       | Saved register 2                 | Yes                    | Callee-saved                         |
+| x19      | s3       | Saved register 3                 | Yes                    | Callee-saved                         |
+| x20      | s4       | Saved register 4                 | Yes                    | Callee-saved                         |
+| x21      | s5       | Saved register 5                 | Yes                    | Callee-saved                         |
+| x22      | s6       | Saved register 6                 | Yes                    | Callee-saved                         |
+| x23      | s7       | Saved register 7                 | Yes                    | Callee-saved                         |
+| x24      | s8       | Saved register 8                 | Yes                    | Callee-saved                         |
+| x25      | s9       | Saved register 9                 | Yes                    | Callee-saved                         |
+| x26      | s10      | Saved register 10                | Yes                    | Callee-saved                         |
+| x27      | s11      | Saved register 11                | Yes                    | Callee-saved                         |
+| x28      | t3       | Temporary register 3             | No                     | Caller-saved temporary               |
+| x29      | t4       | Temporary register 4             | No                     | Caller-saved temporary               |
+| x30      | t5       | Temporary register 5             | No                     | Caller-saved temporary               |
+| x31      | t6       | Temporary register 6             | No                     | Caller-saved temporary               |
+
+---
+
+#### **Calling Convention Summary**
+
+- **a0–a7 (x10–x17):** Function arguments and return values (caller-saved).
+- **s0–s11 (x8–x9, x18–x27):** Callee-saved registers (preserved across function calls).
+- **t0–t6 (x5–x7, x28–x31):** Temporaries (caller-saved).
+- **sp (x2):** Stack pointer (always 16-byte aligned).
+- **ra (x1):** Return address for function calls.
+- **zero (x0):** Always zero.
+
+---
+
+**References:**  
+- [Assignment PDF, Task 5][1]  
+- [RISC-V Calling Convention][2]  
+- [Codecubix RISC-V Register Table][3]  
+- [WikiChip RISC-V Registers][5]  
+- [Project F: RV32 ABI Registers][7]
+
+---
+
+
