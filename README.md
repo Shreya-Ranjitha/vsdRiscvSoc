@@ -73,6 +73,6 @@ Set up the RISC-V cross-compilation toolchain on Ubuntu, add it to your PATH, an
 #### **Screenshots**
 
 ![Toolchain extraction and PATH setup](Outputs/task1_1.jpeg)
-![Toolchain version check](screenshots/task1_toolchain_version.png)
+![Toolchain version check](Outputs/task1_2.png)
 
 
