@@ -297,5 +297,73 @@ Start GDB on the RISC-V ELF file, set a breakpoint at `main`, step through the c
 
 ---
 
+### Task 7: Running Under an Emulator
+
+**Objective:**  
+Run a bare-metal RISC-V ELF on QEMU and print to the UART console.
+
+---
+
+#### **Process**
+
+1. **Wrote minimal startup code (`crt0.s`):**
+    ```
+    .section .init
+    .globl _start
+    _start:
+        la sp, _stack_top
+        la a0, _sbss
+        la a1, _ebss
+        li a2, 0
+    bss_loop:
+        bge a0, a1, call_main
+        sw a2, 0(a0)
+        addi a0, a0, 4
+        j bss_loop
+    call_main:
+        call main
+    hang:
+        j hang
+    ```
+    ![crt0.s content](Outputs/task7_1.jpg)
+
+2. **Created a linker script (`link.ld`):**
+    ```
+    SECTIONS {
+      .text 0x80000000 : { *(.text*) }
+      .data 0x10000000 : { *(.data*) *(.sdata*) }
+      .bss : { *(.bss*) *(.sbss*) }
+      _sbss = ADDR(.bss);
+      _ebss = ADDR(.bss) + SIZEOF(.bss);
+      _stack_top = 0x10020000;
+    }
+    ```
+    ![link.ld content](Outputs/task7_2.jpg)
+
+3. **Wrote a UART test program (`uart_test.c`):**
+    ```
+    #define UART_TX (*(volatile unsigned char*)0x10000000)
+
+    int main() {
+        const char *msg = "Hello, UART!\n";
+        while (*msg) {
+            UART_TX = *msg++;
+        }
+        while (1); // Infinite loop to prevent exit
+        return 0;
+    }
+    ```
+    ![uart_test.c content](Outputs/task7_3.jpg)
+
+4. **Compiled and ran the program in QEMU:**
+    ```
+    riscv32-unknown-elf-gcc -march=rv32imac -mabi=ilp32 -nostdlib -nostartfiles -T link.ld crt0.s uart_test.c -o uart_test.elf
+    qemu-system-riscv32 -nographic -machine virt -kernel uart_test.elf -bios none
+    ```
+    - The QEMU terminal displayed:  
+      `Hello, UART!`
+    ![QEMU UART output](Outputs/task7_4.jpg)
+
+
 
 
