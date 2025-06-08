@@ -692,3 +692,143 @@ Understand and implement a minimal RISC-V startup routine (`crt0.s`) and linker 
 - The disassembly output confirms that the startup code and `main` are correctly linked and located at the specified addresses.
 
 ---
+### Task 13: Interrupt Primer
+
+**Objective:**  
+Implement a basic timer interrupt handler in RISC-V, configure the interrupt controller, and observe variable changes in GDB when the interrupt fires.
+
+---
+
+#### **Process**
+
+1. **Wrote the timer interrupt handler in C (`timer_interrupt.c`):**
+    ```
+    #include <stdint.h>
+
+    // Memory-mapped addresses for QEMU virt machine
+    #define MTIME    (*(volatile uint64_t *)0x0200bff8)
+    #define MTIMECMP (*(volatile uint64_t *)0x02004000)
+
+    // Global variable to show change from interrupt
+    volatile unsigned int myreg = 0;
+
+    // Timer interrupt handler
+    void __attribute__((interrupt)) timer_handler(void) {
+        MTIMECMP = MTIME + 1000000; // Schedule next interrupt
+        myreg++;                    // Change variable on each interrupt
+    }
+
+    // Set mtvec to handler address
+    static inline void set_mtvec(void (*handler)()) {
+        asm volatile("csrw mtvec, %0" :: "r"(handler));
+    }
+
+    // Enable timer and global interrupts
+    static inline void enable_timer_interrupts() {
+        asm volatile("csrs mie, %0" :: "r"(1 << 7));   // Enable MTIE
+        asm volatile("csrs mstatus, %0" :: "r"(1 << 3)); // Enable MIE
+    }
+
+    void timer_init(uint64_t delta) {
+        MTIMECMP = MTIME + delta;
+    }
+
+    int main() {
+        set_mtvec(timer_handler);
+        timer_init(1000000); // First timer after 1 million cycles
+        enable_timer_interrupts();
+        while (1) {
+            // Observe 'myreg' in GDB to see it increment on each interrupt
+        }
+    }
+    ```
+    ![Timer interrupt C code](Outputs/task13_1.jpeg)
+
+2. **Launched QEMU with GDB server enabled:**
+    ```
+    qemu-system-riscv32 -nographic -machine virt -kernel timer_interrupt.elf -bios none -s -S
+    ```
+    ![QEMU launch with GDB server](Outputs/task13_2.jpeg)
+
+3. **Connected with GDB, set breakpoints and watchpoints:**
+    ```
+    riscv32-unknown-elf-gdb timer_interrupt.elf
+    (gdb) target remote :1234
+    (gdb) break main
+    (gdb) continue
+    (gdb) watch myreg
+    (gdb) continue
+    ```
+    - Each time the timer interrupt fires, `myreg` increments, and GDB displays the change.
+    ![GDB session showing watchpoint on myreg](Outputs/task13_3.jpeg)
+
+---
+
+#### **Explanation**
+
+- The timer interrupt handler (`timer_handler`) is registered by writing its address to the `mtvec` CSR.
+- The handler schedules the next timer interrupt and increments a global variable, `myreg`.
+- Timer and global interrupts are enabled by setting the appropriate bits in the `mie` and `mstatus` CSRs.
+- QEMU is run with the `-s -S` flags to enable the GDB server and halt at startup.
+- In GDB, a watchpoint is set on `myreg` to observe its value change each time the interrupt fires, confirming correct interrupt handling.
+
+---
+### Task 14: rv32imac vs rv32imc – What’s the “A”?
+
+**Objective:**  
+Understand the difference between the RISC-V `rv32imac` and `rv32imc` architectures, focusing on the "A" extension for atomic instructions, and demonstrate the use of atomic operations in C with inline assembly.
+
+---
+
+#### **Process**
+
+1. **Wrote an atomic add function in C using inline assembly:**
+    ```
+    int atomic_add(volatile int *ptr, int val) {
+        int old, tmp;
+        __asm__ volatile (
+            "1: lr.w %0, (%2)\n"
+            "add %1, %0, %3\n"
+            "sc.w %1, %1, (%2)\n"
+            "bnez %1, 1b\n"
+            : "=&r"(old), "=&r"(tmp)
+            : "r"(ptr), "r"(val)
+            : "memory"
+        );
+        return old;
+    }
+    ```
+    ![atomic_add function in C](Outputs/task14_1.jpeg)
+
+2. **Compiled the code for both `rv32imac` and `rv32imc`:**
+    ```
+    riscv32-unknown-elf-gcc -march=rv32imac -mabi=ilp32 -S a_ext.c -o a_ext_imac.s
+    riscv32-unknown-elf-gcc -march=rv32imc -mabi=ilp32 -S a_ext.c -o a_ext_imc.s
+    ```
+
+3. **Inspected the generated assembly for both variants:**
+    - With `rv32imac`, atomic instructions (`lr.w` and `sc.w`) are present.
+    - With `rv32imc`, these instructions are not supported, and compilation may fail or omit atomic operations.
+    ![Assembly output for rv32imac](Outputs/task14_2.jpeg)
+    ![Assembly output for rv32imc](Outputs/task14_3.jpeg)
+
+---
+
+#### **Explanation**
+
+- **What is the "A" Extension?**  
+  The "A" in `rv32imac` stands for the **Atomic** extension, which adds instructions for atomic read-modify-write operations such as `lr.w` (load-reserved) and `sc.w` (store-conditional)[7][5][6][8].
+  - These are essential for implementing thread-safe operations, mutexes, semaphores, and lock-free data structures in multicore or multithreaded environments[5][7].
+- **Difference Between rv32imac and rv32imc:**  
+  - `rv32imac` supports atomic instructions and can compile and run code using them.
+  - `rv32imc` does **not** support atomic instructions; attempts to use them will fail or not generate the atomic code.
+- **Why Use Atomics?**  
+  - Atomics are required for safe concurrent programming, ensuring operations like incrementing a shared variable are performed without race conditions.
+- **How Does the Code Work?**  
+  - The `atomic_add` function uses `lr.w` and `sc.w` in a loop to perform an atomic addition:  
+    - `lr.w` loads the value (with a reservation).
+    - `add` computes the result.
+    - `sc.w` attempts to store the result only if no other core has modified the value; if it fails, the loop retries.
+
+---
+
