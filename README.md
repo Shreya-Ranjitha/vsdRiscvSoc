@@ -162,17 +162,6 @@ Generate the assembly code for the minimal "Hello, RISC-V!" C program and explai
     ```
     Restores the stack and returns from the function.
 
----
-
-#### **Issues Faced**
-
-- No issues encountered.  
-  *(If you faced any, describe them here.)*
-
----
-
-**References:**  
-- [Assignment PDF, Task 3][2]
 
 ---
 
@@ -209,19 +198,6 @@ Disassemble the RISC-V ELF file and convert it to a raw Intel HEX format, unders
     - **Explanation:**  
       - Each line in the HEX file represents a chunk of binary data from the ELF, encoded in Intel HEX format.
       - The columns show the byte count, address, record type, data, and checksum.
-
----
-
-#### **Issues Faced**
-
-- No issues encountered.  
-  *(If you faced any, describe them here.)*
-
----
-
-**References:**  
-- [Assignment PDF, Task 4](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/63085063/63cfd9d7-6a47-4b26-8a4c-3214bd32cfe8/p1w1.pdf)
-- [Peer Example](https://github.com/rsdsrahul4566/vsdRiscvSoc/blob/main/README.md)
 
 ---
 
@@ -272,24 +248,54 @@ List all 32 RV32 integer registers with their ABI names and typical calling-conv
 
 ---
 
-#### **Calling Convention Summary**
+### Task 6: Stepping with GDB
 
-- **a0–a7 (x10–x17):** Function arguments and return values (caller-saved).
-- **s0–s11 (x8–x9, x18–x27):** Callee-saved registers (preserved across function calls).
-- **t0–t6 (x5–x7, x28–x31):** Temporaries (caller-saved).
-- **sp (x2):** Stack pointer (always 16-byte aligned).
-- **ra (x1):** Return address for function calls.
-- **zero (x0):** Always zero.
+**Objective:**  
+Start GDB on the RISC-V ELF file, set a breakpoint at `main`, step through the code, and inspect registers and disassembly.
 
 ---
 
-**References:**  
-- [Assignment PDF, Task 5][1]  
-- [RISC-V Calling Convention][2]  
-- [Codecubix RISC-V Register Table][3]  
-- [WikiChip RISC-V Registers][5]  
-- [Project F: RV32 ABI Registers][7]
+#### **Process**
+
+1. **Started GDB and connected to QEMU:**
+    ```
+    riscv32-unknown-elf-gdb hello.elf
+    (gdb) target remote localhost:1234
+    ```
+    ![GDB connection and setup](Outputs/task6_1.jpg)
+
+2. **Set a breakpoint at `main` and began stepping:**
+    ```
+    (gdb) break main
+    (gdb) continue
+    (gdb) next
+    (gdb) stepi
+    ```
+    - The program stopped at the `main` function as expected.
+    ![Breakpoint and stepping](Outputs/task6_2.jpg)
+
+3. **Inspected registers and disassembled `main`:**
+    ```
+    (gdb) info registers
+    (gdb) disassemble
+    ```
+    - Register values and the full disassembly of `main` were displayed.
+    ![Registers and disassembly](Outputs/task6_3.jpg)
 
 ---
+
+#### **Explanation**
+
+- **GDB Setup:**  
+  Started GDB with the ELF, connected to QEMU’s GDB server, and set a breakpoint at `main`.
+- **Stepping:**  
+  Used `next` to step through C source lines and `stepi` for single assembly instructions.
+- **Register Inspection:**  
+  `info registers` showed the current values of all CPU registers, including program counter (`pc`), stack pointer (`sp`), and return address (`ra`).
+- **Disassembly:**  
+  `disassemble` displayed the assembly code for the `main` function, showing the prologue, body, and epilogue.
+
+---
+
 
 
