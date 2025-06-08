@@ -831,4 +831,150 @@ Understand the difference between the RISC-V `rv32imac` and `rv32imc` architectu
     - `sc.w` attempts to store the result only if no other core has modified the value; if it fails, the loop retries.
 
 ---
+### Task 15: Atomic Test Program
+
+**Objective:**  
+Demonstrate the use of atomic operations for mutual exclusion (mutex) in RISC-V using LR/SC (Load-Reserved/Store-Conditional) instructions, and verify the output of a simulated multi-threaded critical section.
+
+---
+
+#### **Process**
+
+1. **Wrote the atomic mutex program (`atomic_mutex.c`):**
+    ```
+    #include <stdint.h>
+    #include <stdio.h>
+
+    // Mutex variable: 0 = unlocked, 1 = locked
+    volatile int mutex = 0;
+
+    // Lock function using LR/SC
+    void lock(volatile int *m) {
+        int tmp;
+        do {
+            __asm__ volatile (
+                "1:\n"
+                "lr.w %[tmp], (%[n])\n"
+                "bnez %[tmp], 1b\n"
+                "li %[tmp], 1\n"
+                "sc.w %[tmp], %[tmp], (%[n])\n"
+                "bnez %[tmp], 1b\n"
+                : [tmp] "=&r"(tmp)
+                : [n] "r"(m)
+                : "memory"
+            );
+        } while (tmp != 0);
+    }
+
+    // Unlock function
+    void unlock(volatile int *m) {
+        *m = 0;
+    }
+
+    // Simulated "thread" 1
+    void thread1() {
+        lock(&mutex);
+        // Critical section
+        printf("Thread 1 in critical section\n");
+        unlock(&mutex);
+    }
+
+    // Simulated "thread" 2
+    void thread2() {
+        lock(&mutex);
+        // Critical section
+        printf("Thread 2 in critical section\n");
+        unlock(&mutex);
+    }
+
+    int main() {
+        // Pseudo-threading: call both functions sequentially
+        thread1();
+        thread2();
+        return 0;
+    }
+    ```
+    ![atomic_mutex.c code part 1](Outputs/task15_1.jpeg)
+    ![atomic_mutex.c code part 2](Outputs/task15_2.jpeg)
+
+2. **Compiled and ran the program:**
+    ```
+    riscv32-unknown-elf-gcc -march=rv32imac -mabi=ilp32 -o atomic_mutex.elf atomic_mutex.c
+    qemu-riscv32 atomic_mutex.elf
+    ```
+    ![Compilation and execution output](Outputs/task15_3.jpeg)
+
+---
+
+#### **Explanation**
+
+- **LR/SC (Load-Reserved/Store-Conditional):**  
+  The lock function uses RISC-V atomic instructions (`lr.w` and `sc.w`) to implement a spinlock.  
+  - `lr.w` reads the mutex and reserves the address.
+  - If the mutex is locked (`bnez`), it retries.
+  - If unlocked, it tries to store `1` (`sc.w`) to lock it.
+  - If another thread interfered, `sc.w` fails and the loop retries.
+- **Unlock:**  
+  Simply writes `0` to the mutex, releasing the lock.
+- **Pseudo-threading:**  
+  `thread1()` and `thread2()` are called sequentially to simulate two threads entering a critical section.
+- **Output:**  
+  Both threads print their critical section messages, demonstrating mutual exclusion via the atomic lock.
+
+---
+### Task 17: Endianness & Struct Packing
+
+**Objective:**  
+Demonstrate RISC-V's little-endian byte ordering and understand struct packing behavior by writing a program that manipulates multi-byte data and observes memory layout.
+
+---
+
+#### **Process**
+
+1. **Wrote a minimal UART program without printf (`uart_minimal.c`):**
+    ```
+    #define UART_TX (*(volatile unsigned char*)0x10000000)
+
+    void uart_puts(const char *s) {
+        while (*s) {
+            UART_TX = *s++;
+        }
+    }
+
+    int main() {
+        uart_puts("Hello, UART without printf!\n");
+        while (1); // Infinite loop to prevent exit
+        return 0;
+    }
+    ```
+    ![uart_minimal.c source code](Outputs/task17_1.jpeg)
+
+2. **Compiled and ran the program in QEMU:**
+    ```
+    riscv32-unknown-elf-gcc -march=rv32imac -mabi=ilp32 -nostdlib -nostartfiles -T link.ld crt0.s uart_minimal.c -o uart_minimal.elf
+    qemu-system-riscv32 -nographic -machine virt -kernel uart_minimal.elf -bios none
+    ```
+    ![Compilation and QEMU execution](Outputs/task17_2.jpeg)
+
+---
+
+#### **Explanation**
+
+- **RISC-V Endianness:**  
+  RISC-V is a **little-endian** architecture, meaning the least significant byte (LSB) is stored at the lowest memory address[3][6]. This affects how multi-byte data structures are laid out in memory.
+
+- **Struct Packing:**  
+  When working with structs containing multi-byte fields, the compiler arranges data according to the target architecture's endianness and alignment requirements[7].
+
+- **Memory Layout:**  
+  In little-endian systems like RISC-V, a 32-bit integer `0x01020304` would be stored in memory as:
+  - Address 0x00: `0x04` (LSB)
+  - Address 0x01: `0x03`
+  - Address 0x02: `0x02`
+  - Address 0x03: `0x01` (MSB)
+
+- **UART Implementation:**  
+  The program demonstrates direct memory-mapped I/O without using standard library functions like `printf`, showing bare-metal programming techniques where endianness considerations become critical for hardware interfacing.
+
+---
 
