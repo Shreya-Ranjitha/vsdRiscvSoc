@@ -894,7 +894,6 @@ Demonstrate the use of atomic operations for mutual exclusion (mutex) in RISC-V 
         return 0;
     }
     ```
-    ![atomic_mutex.c code part 1](Outputs/task15_1.jpeg)
     ![atomic_mutex.c code part 2](Outputs/task15_2.jpeg)
 
 2. **Compiled and ran the program:**
@@ -947,14 +946,14 @@ Demonstrate RISC-V's little-endian byte ordering and understand struct packing b
         return 0;
     }
     ```
-    ![uart_minimal.c source code](Outputs/task17_1.jpeg)
+    ![uart_minimal.c source code](Outputs/task17_2.jpeg)
 
 2. **Compiled and ran the program in QEMU:**
     ```
     riscv32-unknown-elf-gcc -march=rv32imac -mabi=ilp32 -nostdlib -nostartfiles -T link.ld crt0.s uart_minimal.c -o uart_minimal.elf
     qemu-system-riscv32 -nographic -machine virt -kernel uart_minimal.elf -bios none
     ```
-    ![Compilation and QEMU execution](Outputs/task17_2.jpeg)
+    ![Compilation and QEMU execution](Outputs/task17_1.jpeg)
 
 ---
 
