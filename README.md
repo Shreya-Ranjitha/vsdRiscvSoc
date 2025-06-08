@@ -661,7 +661,7 @@ Understand and implement a minimal RISC-V startup routine (`crt0.s`) and linker 
     hang:
         j hang
     ```
-    ![crt0.s content](Outputs/task12_1.jpeg)
+    ![crt0.s content](Outputs/task12_2.jpeg)
 
 2. **Created the linker script (`link.ld`):**
     ```
@@ -674,14 +674,14 @@ Understand and implement a minimal RISC-V startup routine (`crt0.s`) and linker 
       _stack_top = 0x10020000; /* Example stack top address */
     }
     ```
-    ![link.ld content](Outputs/task12_2.jpeg)
+    ![link.ld content](Outputs/task12_3.jpeg)
 
 3. **Compiled and disassembled the ELF:**
     ```
     riscv32-unknown-elf-gcc -march=rv32imc -mabi=ilp32 -nostdlib -nostartfiles -T link.ld crt0.s hello.c -o hello.elf
     riscv32-unknown-elf-objdump -d hello.elf
     ```
-    ![Disassembly of hello.elf](Outputs/task12_3.jpeg)
+    ![Disassembly of hello.elf](Outputs/task12_1.jpeg)
 
 ---
 
