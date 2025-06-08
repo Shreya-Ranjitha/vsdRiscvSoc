@@ -417,6 +417,67 @@ The comparison reveals several key optimization differences:
 
 ---
 
+### Task 9: Inline Assembly Basics
+
+**Objective:**  
+Write a C function that returns the cycle counter by reading CSR 0xC00 using inline assembly and explain each constraint.
+
+---
+
+#### **Process**
+
+1. **Implemented the cycle counter function with inline assembly:**
+    ```
+    #include <stdint.h>
+    #include <stdio.h>
+
+    static inline uint32_t rdcycle(void) {
+        uint32_t c;
+        asm volatile ("csrr %0, cycle" : "=r"(c));
+        return c;
+    }
+
+    int main() {
+        uint32_t cycles = rdcycle();
+        printf("Cycle counter: %u\n", cycles);
+        return 0;
+    }
+    ```
+    ![Inline assembly code (hello.c)](Outputs/task9_1.jpg)
+
+2. **Compiled and executed the program:**
+    ```
+    riscv32-unknown-elf-gcc -march=rv32gc -mabi=ilp32 -o hello.elf hello.c
+    qemu-riscv32 hello.elf
+    ```
+    ![Compilation and execution](Outputs/task9_2.jpg)
+
+---
+
+#### **Explanation**
+
+**Inline Assembly Breakdown:**
+- **`asm volatile`:** Tells the compiler this is inline assembly that should not be optimized away
+- **`"csrr %0, cycle"`:** The RISC-V assembly instruction to read the cycle CSR (0xC00)
+  - `csrr` = Control and Status Register Read
+  - `%0` = Placeholder for the first output operand
+  - `cycle` = The cycle counter CSR
+- **`: "=r"(c)`:** Output constraint specifying:
+  - `=` = Output operand (write-only)  
+  - `r` = Use any general-purpose register
+  - `(c)` = Store result in variable `c`
+
+**Why `volatile`:**
+- Prevents compiler from optimizing away the assembly
+- Ensures the instruction executes every time the function is called
+- Important for reading hardware registers that may change between accesses
+
+**CSR 0xC00 (cycle):**
+- Hardware counter that increments with each clock cycle
+- Provides a way to measure execution time and performance
+- Read-only from user mode in RISC-V
+
+---
 
 
 
