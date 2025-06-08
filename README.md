@@ -75,12 +75,10 @@ Set up the RISC-V cross-compilation toolchain on Ubuntu, add it to your PATH, an
 ![Toolchain extraction and PATH setup](Outputs/task1_1.jpeg)
 ![Toolchain version check](Outputs/task1_2.jpeg)
 
-## Week 2
-
-### Task 1: Compile "Hello, RISC-V" and Generate Assembly
+### Task 2: Minimal "Hello, RISC-V!" C Program and ELF Generation
 
 **Objective:**  
-Write a minimal C program that prints "Hello, RISC-V!", cross-compile it for RV32IMC, and generate the corresponding assembly code.
+Write a minimal C program that prints "Hello, RISC-V!" and cross-compile it for RISC-V, verifying the ELF output.
 
 ---
 
@@ -94,31 +92,40 @@ Write a minimal C program that prints "Hello, RISC-V!", cross-compile it for RV3
         return 0;
     }
     ```
-    ![hello.c source code](Outputs/task2_1.jpeg)
+    ![hello.c source code](Outputs/task2_2.jpeg)
 
-2. **Generated assembly from C source:**
+2. **Compiled the C file to a RISC-V ELF executable:**
     ```
-    riscv32-unknown-elf-gcc -S hello.c
-    cat hello.s
+    riscv32-unknown-elf-gcc -o hello.elf hello.c
     ```
-    ![Assembly output (hello.s)](Outputs/task2_2.jpeg)
+
+3. **Checked the generated ELF file:**
+    ```
+    file hello.elf
+    ```
+    Output confirms it is an ELF 32-bit RISC-V executable.
+
+    ![Terminal: Compile and verify ELF](Outputs/task2_1.jpeg)
 
 ---
 
 #### **Explanation**
 
-- The `-S` flag tells the compiler to generate assembly (`hello.s`) instead of an object or executable.
-- The assembly file shows the function prologue, the loading of the string, and the call to `puts` (which is used by `printf` for simple strings).
-- Key instructions in the prologue:
-  - `addi sp,sp,-16` : Allocates stack space.
-  - `sw ra,12(sp)` : Saves the return address.
-  - `sw s0,8(sp)` : Saves the frame pointer.
-  - `lui`/`addi` : Loads the string address.
-  - `call puts` : Calls the function to print the string.
-- The epilogue restores the stack and returns.
+- The `hello.c` file is a minimal C program using `printf` to print a message.
+- The `riscv32-unknown-elf-gcc` command cross-compiles the C code for the RISC-V architecture, producing an ELF binary.
+- The `file` command verifies the output is a valid RISC-V ELF executable.
 
 ---
 
+#### **Issues Faced**
 
+- No issues encountered.  
+  *(If you had any, note them here for completeness.)*
 
+---
 
+**References:**  
+- [Assignment PDF, Task 2](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/63085063/dfbcd8f7-a8be-454d-abb9-415dd1feba97/p1w1.pdf)
+- [Peer Example](https://github.com/rsdsrahul4566/vsdRiscvSoc/blob/main/README.md)
+
+---
