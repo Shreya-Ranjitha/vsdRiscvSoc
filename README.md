@@ -10,21 +10,25 @@ This README will serve as a complete log of commands, code, outputs, screenshots
 
 ## Table of Contents
 
+## Table of Contents
+
 - [Introduction](#introduction)
 - [Week 1](#week-1)
-  - [Task 1: Toolchain Setup](#task-1-toolchain-setup)
-  - [Task 2: Cross-Compile Hello, RISC-V!](#task-2-cross-compile-hello-risc-v)
-  - [Task 3: Generate and Analyze Assembly](#task-3-generate-and-analyze-assembly)
-  - [Task 4: HEX Dump & Disassembly](#task-4-hex-dump--disassembly)
-  - [Task 5: RISC-V ABI & Register Reference](#task-5-risc-v-abi--register-reference)
+  - [Task 1: Install & Sanity-Check the Toolchain](#task-1-install--sanity-check-the-toolchain)
+  - [Task 2: Compile "Hello, RISC-V"](#task-2-compile-hello-risc-v)
+  - [Task 3: From C to Assembly](#task-3-from-c-to-assembly)
+  - [Task 4: Hex Dump & Disassembly](#task-4-hex-dump--disassembly)
+  - [Task 5: ABI & Register Cheat-Sheet](#task-5-abi--register-cheat-sheet)
   - [Task 6: Stepping with GDB](#task-6-stepping-with-gdb)
   - [Task 7: Running Under an Emulator](#task-7-running-under-an-emulator)
+  - [Task 8: Exploring GCC Optimisation](#task-8-exploring-gcc-optimisation)
+  - [Task 9: Inline Assembly Basics](#task-9-inline-assembly-basics)
+  - [Task 10: Memory-Mapped I/O Demo](#task-10-memory-mapped-io-demo)
+  - [Task 11: Linker Script 101](#task-11-linker-script-101)
+  - [Task 12: Start-up Code & crt0](#task-12-start-up-code--crt0)
+  - [Task 13: Interrupt Primer](#task-13-interrupt-primer)
+  - [Task 14: rv32imac vs rv32imc - What's the "A"?](#task-14-rv32imac-vs-rv32imc---whats-the-a)
+  - [Task 15: Atomic Test Program](#task-15-atomic-test-program)
+  - [Task 16: Using Newlib printf Without an OS](#task-16-using-newlib-printf-without-an-os)
+  - [Task 17: Endianness & Struct Packing](#task-17-endianness--struct-packing)
 
-## Week 1
-
-### Task 1: Toolchain Setup
-
-**Objective:**  
-Set up the RISC-V toolchain and verify installation.
-
-**Commands Used:**
