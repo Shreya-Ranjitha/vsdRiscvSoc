@@ -479,5 +479,51 @@ Write a C function that returns the cycle counter by reading CSR 0xC00 using inl
 
 ---
 
+### Task 10: Memory-Mapped I/O Demo
+
+**Objective:**  
+Demonstrate bare-metal C code to toggle a GPIO register located at 0x10012000, and explain how to prevent the compiler from optimizing away the store.
+
+---
+
+#### **Process**
+
+1. **Wrote the GPIO toggle program (`gpio_toggle.c`):**
+    ```
+    #include <stdint.h>
+
+    void toggle_gpio() {
+        volatile uint32_t *gpio = (uint32_t *)0x10012000;
+        *gpio = 0x1; // Set GPIO high
+        *gpio = 0x0; // Set GPIO low
+    }
+
+    int main() {
+        toggle_gpio();
+        while (1); // Prevent exit (for bare-metal)
+        return 0;
+    }
+    ```
+    ![GPIO toggle C code](Outputs/task10_1.jpeg)
+
+2. **Compiled and ran the program in QEMU:**
+    ```
+    riscv32-unknown-elf-gcc -march=rv32gc -mabi=ilp32 -o gpio_toggle.elf gpio_toggle.c
+    qemu-system-riscv32 -nographic -machine virt -kernel gpio_toggle.elf -bios none
+    ```
+    ![Compilation and QEMU run](Outputs/task10_2.jpeg)
+
+---
+
+#### **Explanation**
+
+- **Memory-Mapped I/O:**  
+  The GPIO register is accessed by casting its address (`0x10012000`) to a pointer and dereferencing it.
+- **The `volatile` Keyword:**  
+  Declaring the pointer as `volatile` tells the compiler not to optimize away the store operations, ensuring both writes (`*gpio = 0x1;` and `*gpio = 0x0;`) actually occur.
+- **Bare-Metal Infinite Loop:**  
+  The `while (1);` loop in `main` prevents the program from exiting, which is standard practice in bare-metal embedded code.
+
+---
 
 
