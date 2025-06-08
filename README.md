@@ -174,4 +174,52 @@ Generate the assembly code for the minimal "Hello, RISC-V!" C program and explai
 
 ---
 
+### Task 4: Hex Dump & Disassembly
+
+**Objective:**  
+Disassemble the RISC-V ELF file and convert it to a raw Intel HEX format, understanding the meaning of each column in the outputs.
+
+---
+
+#### **Process**
+
+1. **Disassembled the ELF file using objdump:**
+    ```
+    riscv32-unknown-elf-objdump -d hello.elf > hello.dump
+    cat hello.dump
+    ```
+    ![Disassembly output (hello.dump)](Outputs/task4_1.jpg)
+
+    - **Explanation:**  
+      - The first column is the memory address of each instruction.
+      - The second column is the raw machine code (opcode) in hexadecimal.
+      - The third column is the assembly mnemonic and operands.
+      - For example, `100b4: 1141 addi sp,sp,-16` means:  
+        - At address `0x100b4`, the instruction `addi sp,sp,-16` is encoded as `1141`.
+
+2. **Converted the ELF to Intel HEX format:**
+    ```
+    riscv32-unknown-elf-objcopy -O ihex hello.elf hello.hex
+    cat hello.hex
+    ```
+    ![Intel HEX output (hello.hex)](Outputs/task4_2.jpg)
+
+    - **Explanation:**  
+      - Each line in the HEX file represents a chunk of binary data from the ELF, encoded in Intel HEX format.
+      - The columns show the byte count, address, record type, data, and checksum.
+
+---
+
+#### **Issues Faced**
+
+- No issues encountered.  
+  *(If you faced any, describe them here.)*
+
+---
+
+**References:**  
+- [Assignment PDF, Task 4](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/63085063/63cfd9d7-6a47-4b26-8a4c-3214bd32cfe8/p1w1.pdf)
+- [Peer Example](https://github.com/rsdsrahul4566/vsdRiscvSoc/blob/main/README.md)
+
+---
 
