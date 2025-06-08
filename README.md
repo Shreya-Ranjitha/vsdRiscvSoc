@@ -92,20 +92,21 @@ Write a minimal C program that prints "Hello, RISC-V!" and cross-compile it for 
         return 0;
     }
     ```
-    ![hello.c source code](Outputs/task2_2.jpeg)
+    ![Terminal: Compile and verify ELF](Outputs/task2_1.jpeg)
+ 
 
 2. **Compiled the C file to a RISC-V ELF executable:**
     ```
     riscv32-unknown-elf-gcc -o hello.elf hello.c
     ```
-
+   ![hello.c source code](Outputs/task2_2.jpeg)
 3. **Checked the generated ELF file:**
     ```
     file hello.elf
     ```
     Output confirms it is an ELF 32-bit RISC-V executable.
 
-    ![Terminal: Compile and verify ELF](Outputs/task2_1.jpeg)
+    
 
 ---
 
