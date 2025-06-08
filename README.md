@@ -70,23 +70,9 @@ Set up the RISC-V cross-compilation toolchain on Ubuntu, add it to your PATH, an
 
 ---
 
-#### **Issues Faced**
-
-- No major issues.  
-- *(If you faced any, describe them here. For example: "Initially forgot to source .bashrc, so the tools weren’t found. After running `source ~/.bashrc`, it worked.")*
-
----
-
 #### **Screenshots**
 
 ![Toolchain extraction and PATH setup](screenshots/task1_toolchain_extract.png)
 ![Toolchain version check](screenshots/task1_toolchain_version.png)
 
----
 
-**References:**  
-- [Assignment PDF, Task 1](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/63085063/dfbcd8f7-a8be-454d-abb9-415dd1feba97/p1w1.pdf)  
-- [rsdsrahul4566/vsdRiscvSoc](https://github.com/rsdsrahul4566/vsdRiscvSoc/blob/main/README.md)  
-- [kathirr0805/vsdRiscvSoc](https://github.com/kathirr0805/vsdRiscvSoc/blob/main/Week1/README.md)
-
----
