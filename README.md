@@ -75,7 +75,7 @@ Set up the RISC-V cross-compilation toolchain on Ubuntu, add it to your PATH, an
 ![Toolchain extraction and PATH setup](Outputs/task1_1.jpeg)
 ![Toolchain version check](Outputs/task1_2.jpeg)
 
-### Task 2: Minimal "Hello, RISC-V!" C Program and ELF Generation
+### Task 2: Compile "Hello, RISC-V"
 
 **Objective:**  
 Write a minimal C program that prints "Hello, RISC-V!" and cross-compile it for RISC-V, verifying the ELF output.
