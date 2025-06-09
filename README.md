@@ -817,8 +817,8 @@ Understand the difference between the RISC-V `rv32imac` and `rv32imc` architectu
 #### **Explanation**
 
 - **What is the "A" Extension?**  
-  The "A" in `rv32imac` stands for the **Atomic** extension, which adds instructions for atomic read-modify-write operations such as `lr.w` (load-reserved) and `sc.w` (store-conditional)[7][5][6][8].
-  - These are essential for implementing thread-safe operations, mutexes, semaphores, and lock-free data structures in multicore or multithreaded environments[5][7].
+  The "A" in `rv32imac` stands for the **Atomic** extension, which adds instructions for atomic read-modify-write operations such as `lr.w` (load-reserved) and `sc.w` (store-conditional).
+  - These are essential for implementing thread-safe operations, mutexes, semaphores, and lock-free data structures in multicore or multithreaded environments.
 - **Difference Between rv32imac and rv32imc:**  
   - `rv32imac` supports atomic instructions and can compile and run code using them.
   - `rv32imc` does **not** support atomic instructions; attempts to use them will fail or not generate the atomic code.
@@ -939,7 +939,7 @@ Enable `printf` functionality in a bare-metal RISC-V environment by implementing
         void uart_putc(char c);
         #endif
         ```
-        ![uart.h source code](Outputs/task16_3.jpg)
+        ![uart.h source code](Outputs/task16_3.jpeg)
 
     - **uart.c**
         ```
@@ -949,7 +949,7 @@ Enable `printf` functionality in a bare-metal RISC-V environment by implementing
             UART_TX = c;
         }
         ```
-        ![uart.c source code](Outputs/task16_2.jpg)
+        ![uart.c source code](Outputs/task16_2.jpeg)
 
 2. **Created a simple main program using the UART driver:**
     - **hello.c**
@@ -963,7 +963,7 @@ Enable `printf` functionality in a bare-metal RISC-V environment by implementing
             return 0;
         }
         ```
-        ![hello.c source code](Outputs/task16_1.jpg)
+        ![hello.c source code](Outputs/task16_1.jpeg)
 
 3. **Compiled and linked the program with startup and linker scripts:**
     ```
@@ -978,20 +978,20 @@ Enable `printf` functionality in a bare-metal RISC-V environment by implementing
       ```
       Hi
       ```
-    ![QEMU output](Outputs/task16_4.jpg)
+    ![QEMU output](Outputs/task16_4.jpeg)
 
 ---
 
 #### **Explanation**
 
 - **Bare-metal printf with Newlib:**  
-  On bare-metal RISC-V, the standard C library (Newlib) does not have an OS to handle I/O, so you must implement low-level functions (like `_write`) or use your own UART routines to redirect output to hardware[5][7][8].
+  On bare-metal RISC-V, the standard C library (Newlib) does not have an OS to handle I/O, so you must implement low-level functions (like `_write`) or use your own UART routines to redirect output to hardware.
 - **UART Driver:**  
   The `uart_putc` function writes a character directly to the UART transmit register at memory address `0x10000000`, which is mapped to the serial port in QEMU's `virt` machine.
 - **No OS Required:**  
   By providing these UART routines and linking with Newlib, you can use standard C functions like `printf` in your bare-metal programs, as Newlib will use your low-level routines for output.
 - **Minimal Example:**  
-  This example demonstrates outputting "Hi" via UART using a custom driver, but with a full Newlib setup and `_write` implementation, you could use `printf` directly for formatted output[5][7][8][9].
+  This example demonstrates outputting "Hi" via UART using a custom driver, but with a full Newlib setup and `_write` implementation, you could use `printf` directly for formatted output.
 
 ---
 
@@ -1034,10 +1034,10 @@ Demonstrate RISC-V's little-endian byte ordering and understand struct packing b
 #### **Explanation**
 
 - **RISC-V Endianness:**  
-  RISC-V is a **little-endian** architecture, meaning the least significant byte (LSB) is stored at the lowest memory address[3][6]. This affects how multi-byte data structures are laid out in memory.
+  RISC-V is a **little-endian** architecture, meaning the least significant byte (LSB) is stored at the lowest memory address. This affects how multi-byte data structures are laid out in memory.
 
 - **Struct Packing:**  
-  When working with structs containing multi-byte fields, the compiler arranges data according to the target architecture's endianness and alignment requirements[7].
+  When working with structs containing multi-byte fields, the compiler arranges data according to the target architecture's endianness and alignment requirements.
 
 - **Memory Layout:**  
   In little-endian systems like RISC-V, a 32-bit integer `0x01020304` would be stored in memory as:
