@@ -921,6 +921,80 @@ Demonstrate the use of atomic operations for mutual exclusion (mutex) in RISC-V 
   Both threads print their critical section messages, demonstrating mutual exclusion via the atomic lock.
 
 ---
+
+### Task 16: Using Newlib printf Without an OS
+
+**Objective:**  
+Enable `printf` functionality in a bare-metal RISC-V environment by implementing minimal UART drivers and linking with Newlib, so that standard C library output is redirected to UART.
+
+---
+
+#### **Process**
+
+1. **Wrote a minimal UART driver and header:**
+    - **uart.h**
+        ```
+        #ifndef UART_H
+        #define UART_H
+        void uart_putc(char c);
+        #endif
+        ```
+        ![uart.h source code](Outputs/task16_3.jpg)
+
+    - **uart.c**
+        ```
+        #include "uart.h"
+        #define UART_TX (*(volatile unsigned char*)0x10000000)
+        void uart_putc(char c) {
+            UART_TX = c;
+        }
+        ```
+        ![uart.c source code](Outputs/task16_2.jpg)
+
+2. **Created a simple main program using the UART driver:**
+    - **hello.c**
+        ```
+        #include "uart.h"
+        int main() {
+            uart_putc('H');
+            uart_putc('i');
+            uart_putc('\n');
+            while (1);
+            return 0;
+        }
+        ```
+        ![hello.c source code](Outputs/task16_1.jpg)
+
+3. **Compiled and linked the program with startup and linker scripts:**
+    ```
+    riscv32-unknown-elf-gcc -march=rv32imac -mabi=ilp32 -nostdlib -nostartfiles -T link.ld crt0.s hello.c uart.c -o uart_test.elf
+    ```
+
+4. **Ran the program in QEMU:**
+    ```
+    qemu-system-riscv32 -nographic -machine virt -kernel uart_test.elf -bios none
+    ```
+    - Output on the QEMU console:  
+      ```
+      Hi
+      ```
+    ![QEMU output](Outputs/task16_4.jpg)
+
+---
+
+#### **Explanation**
+
+- **Bare-metal printf with Newlib:**  
+  On bare-metal RISC-V, the standard C library (Newlib) does not have an OS to handle I/O, so you must implement low-level functions (like `_write`) or use your own UART routines to redirect output to hardware[5][7][8].
+- **UART Driver:**  
+  The `uart_putc` function writes a character directly to the UART transmit register at memory address `0x10000000`, which is mapped to the serial port in QEMU's `virt` machine.
+- **No OS Required:**  
+  By providing these UART routines and linking with Newlib, you can use standard C functions like `printf` in your bare-metal programs, as Newlib will use your low-level routines for output.
+- **Minimal Example:**  
+  This example demonstrates outputting "Hi" via UART using a custom driver, but with a full Newlib setup and `_write` implementation, you could use `printf` directly for formatted output[5][7][8][9].
+
+---
+
 ### Task 17: Endianness & Struct Packing
 
 **Objective:**  
